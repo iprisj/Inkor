@@ -6,7 +6,7 @@
 
 Console console;
 
-void main() {
+int main() {
 
     MessageBoxA(NULL, "prisj", "OKAY", MB_OK);
 
@@ -30,6 +30,7 @@ void main() {
 
 BOOL APIENTRY DllMain(HMODULE hmodule, DWORD reason, void* reserved) {
     if (reason == DLL_PROCESS_ATTACH) {
+        MessageBoxA(NULL, "dll load", "OKAY", MB_OK);
         CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)main, NULL, NULL, NULL);
     }
     return 1;

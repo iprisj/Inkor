@@ -1,6 +1,17 @@
 #include <Windows.h>
 #include <iostream>
 #include <TlHelp32.h>
+#include <filesystem>
+namespace fs = std::filesystem;
+
+std::string GetCurrentDirectory()
+{
+    char buffer[MAX_PATH];
+    GetModuleFileNameA(NULL, buffer, MAX_PATH);
+    std::string::size_type pos = std::string(buffer).find_last_of("\\/");
+
+    return std::string(buffer).substr(0, pos);
+}
 
 DWORD GetProcId(const char* procName)
 {
@@ -50,12 +61,12 @@ int HIjack() {
 int main() {
     std::cout << "Starting..." << std::endl;
     const char* ProcName = "RobloxPlayerBeta.exe";
-    const char* dllPath = "D:\\Documents\\Server\\GitRepos\\Inkor\\bin\Win32\\Debug\\DllSrc.dll";
-
+    std::string Path = fs::current_path().string() + "\\DllSrc.dll";
+    const char* DllPath = Path.c_str();
     HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, NULL, GetProcId(ProcName));
     if (hProc && hProc != INVALID_HANDLE_VALUE) {
-        void* loc = VirtualAllocEx(hProc, 0, MAX_PATH, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-        WriteProcessMemory(hProc, loc, dllPath, strlen(dllPath) + 1, 0);
+        LPVOID loc = VirtualAllocEx(hProc, 0, MAX_PATH, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+        WriteProcessMemory(hProc, loc, DllPath, strlen(DllPath) + 1, 0);
         HANDLE hThread = CreateRemoteThread(hProc, 0, 0, (LPTHREAD_START_ROUTINE)LoadLibraryA, loc, 0, 0);
         if (hThread)
         {
