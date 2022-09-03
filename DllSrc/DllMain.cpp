@@ -17,9 +17,22 @@ int main() {
     //ReplaceFunc(IsDebuggerPresent, rep, 5);
 
     const uintptr_t current_module = reinterpret_cast<uintptr_t>(GetModuleHandle(NULL));
-    const uintptr_t rbx_print_address = current_module + print_adr; //  0x405230     \xE8\x00\x00\x00\x00\x03\x75\xD0, x????xxx (code pattern)|||(ida pattern) E8 ? ? ? ? 03 75 D0
+
     using rbx_print_t = void(__cdecl*)(int method, const char* value);
-    rbx_print_t rbx_print = reinterpret_cast<rbx_print_t>(rbx_print_address);
+    rbx_print_t rbx_print = reinterpret_cast<rbx_print_t>(current_module + print_adr);
+
+    using rbx_getTaskScheduler_t = uintptr_t(__cdecl*)();
+    rbx_getTaskScheduler_t getTaskScheduler = reinterpret_cast<rbx_getTaskScheduler_t>(current_module + getTaskScheduler_adr);
+
+    const uintptr_t TaskScheduler = getTaskScheduler();
+
+
+    // ADDRESS INFO
+    std::cout << "[ADDR]: Task Scheduler: " << std::hex << TaskScheduler << std::dec << "\n";
+    std::cout << "[ADDR]: Console Print: " << std::hex << rbx_print << std::dec << "\n";
+    //
+
+
     std::string input;
     while (true) {
         std::cin >> input;
