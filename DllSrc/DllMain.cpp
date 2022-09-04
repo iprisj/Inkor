@@ -7,9 +7,6 @@
 Console console;
 
 int main() {
-
-    MessageBoxA(NULL, "prisj", "OKAY", MB_OK);
-
     console.AllocateConsole();
     console.InitBypasses();
     console.LinkConsole();
